@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--
+
+-->
+<html>
+    <head>
+        <title>Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="background: #4c5662">
+        <div>Content</div>
+        
+        <input name="foo" placeholder="some-text">
+        <input name="bar" type="number" placeholder="1">
+    
+        
+        <!--scripts-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/myjson-save.js"></script>
+        
+        <script>
+            
+            (function() {
+                
+                var data;
+                var defaults = {
+                    foo: 'hi there',
+                    bar: 3,
+                };
+
+                $(document.body).on('ready.mjs', function(event, mjsData) {
+                    data = $.complete(mjsData, defaults);
+                    
+                    setData();
+                    $(document.body).on('change', 'input', function() {
+                        data[$(this).prop('name')] = $(this).val();
+                        MJS.save();
+                    });
+                });
+                
+                function setData() {
+                    for (var name in data) {
+                        $('[name="' + name + '"]').val(data[name]);
+                    }
+                }
+                
+            })();
+            
+        </script>
+        
+    </body>
+</html>
