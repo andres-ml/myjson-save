@@ -62,67 +62,39 @@
      */
     MJS._render = function() {
         var $mjs = $(`
-            <style>
-            #mjs-wrapper {
-                cursor: pointer;
-                position:fixed;
-                bottom: 0;
-                right: 0;
-                margin: 35px;
-                width: 60px;
-                height: 60px;
-                border-radius: 100%;
-                background-color: #c5d796;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            #mjs-wrapper:hover {
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            }
-            
-            .mjs-icon {
-                transition-duration: 0.3s!important;
-                background-repeat: no-repeat;
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 100%;
-                height: 100%;
-                display: block;
-                transition: opacity .08s linear,-webkit-transform .16s linear;
-                transition: transform .16s linear,opacity .08s linear;
-                transition: transform .16s linear,opacity .08s linear,-webkit-transform .16s linear;
-            }
-            
-            #mjs-icon-close {
-                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAG1BMVEUAAAD///////////////////////////8AAADr8xjQAAAAB3RSTlMAM7cPx7jIAE21/gAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAABESURBVAjXYxAyYGBgYFZkUHcG0ialDCYlBgzM7slA7MxgUgaUNCkzdgfJMbunlIDUMpiUg7hwGiYOVQfTBzMHZi7UHgCB3RAZ7HszogAAAABJRU5ErkJggg==);
-                background-size: 14px 14px;
-                background-position: 50%;
-            }
-            
-            #mjs-icon-open {
-                background-image: url(http://www.clker.com/cliparts/n/U/H/1/H/u/search-icon-white-one-hi.png);
-                background-size: 20px 20px;
-                background-position: center;
-            }
-            
-            #mjs-wrapper:not(.mjs-active) #mjs-icon-close {
-                transform: rotate(30deg) scale(0);
-            }
-            
-            #mjs-wrapper.mjs-active #mjs-icon-open {
-                transform: rotate(-30deg) scale(0);
-            }
-            
-            </style>
-    
-            <div id="mjs-wrapper" style="">
-                <div id="mjs-icon-close" class="mjs-icon"></div>
-                <div id="mjs-icon-open" class="mjs-icon"></div>
+            <div id="mjs-wrapper" class="mjs-active">
+                <div id="mjs-button" class="mjs-button">
+                    <div id="mjs-icon-close" class="mjs-icon"></div>
+                    <div id="mjs-icon-open" class="mjs-icon"></div>
+                </div>
+                <div id="mjs-toolbar">
+                    <div class="mjs-toolbar-item">
+                        <input class="mjs-toolbar-item" readonly type="text" placeholder="bin-id">
+                    </div>
+                    <button id="mjs-lock-input" class="mjs-toolbar-item mjs-toolbar-button mjs-button">
+                    </button>
+                </div>
             </div>
         `);
         
-        $mjs.on('click', function(evt) {
-            $(this).toggleClass('mjs-active');
+        $mjs.on('transitionend', '#mjs-icon-open', function(evt) {
+            window.console.log('transitionend');
+        });
+        
+        $mjs.find('#mjs-lock-input').on('click', function(evt) {
+            $(this).toggleClass('unlocked');
+            
+            var isUnlocked = $(this).hasClass('unlocked');
+            
+            $mjs.find('input').prop('readonly', !isUnlocked);
+            
+            if (isUnlocked) {
+                $mjs.find('input').focus();
+            }
+        })
+        
+        $mjs.on('click', '#mjs-button', function(evt) {
+            $mjs.toggleClass('mjs-active');
         });
         
         $mjs.appendTo(window.document.body);
