@@ -71,11 +71,13 @@
                     <div class="mjs-toolbar-item">
                         <input class="mjs-toolbar-item" readonly type="text" placeholder="bin-id">
                     </div>
-                    <button id="mjs-lock-input" class="mjs-toolbar-item mjs-toolbar-button mjs-button">
-                    </button>
+                    <button id="mjs-lock-input" class="mjs-toolbar-item mjs-toolbar-button mjs-button"></button>
+                    <button id="mjs-reset" class="mjs-toolbar-item mjs-toolbar-button mjs-button"></button>
                 </div>
             </div>
         `);
+        
+        $mjs.find('input').val(config.binId);
         
         $mjs.on('transitionend', '#mjs-icon-open', function(evt) {
             window.console.log('transitionend');
@@ -95,6 +97,19 @@
         
         $mjs.on('click', '#mjs-button', function(evt) {
             $mjs.toggleClass('mjs-active');
+            $mjs.trigger('toggle.mjs', [$mjs.hasClass('mjs-active')]);
+        });
+        
+        $mjs.on('toggle.mjs', function(evt, active) {
+            if (!active) {
+                $mjs.trigger('lock.mjs');
+            }
+        });
+        
+        $mjs.on('lock.mjs', function(evt) {
+            $mjs.find('input')
+                .val(config.binId)
+                .prop('readonly', true);
         });
         
         $mjs.appendTo(window.document.body);
