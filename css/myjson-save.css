@@ -14,11 +14,15 @@
     transition-delay: 0.2s; /* toolbar hide delay */
 }
 
-.mjs-button {
-    cursor: pointer;
-    border: none;
+#mjs-button {
     width: 50px;
     height: 50px;
+}
+
+.mjs-button {
+    cursor: pointer;
+    background: none;
+    border: none;
 }
 
 #mjs-button:hover {
@@ -32,6 +36,8 @@
 }
 
 .mjs-icon {
+    border: none;
+    background: none;
     transition-duration: 0.3s!important;
     background-repeat: no-repeat;
     position: absolute;

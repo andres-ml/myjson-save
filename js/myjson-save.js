@@ -96,9 +96,9 @@
     MJS._render = function() {
         var $mjs = $(`
             <div id="mjs-wrapper" class="mjs-active">
-                <div id="mjs-button" class="mjs-button">
-                    <div id="mjs-icon-close" class="mjs-icon"></div>
-                    <div id="mjs-icon-open" class="mjs-icon"></div>
+                <div id="mjs-button" class="">
+                    <div id="mjs-icon-close" class="mjs-icon mjs-button"></div>
+                    <div id="mjs-icon-open" class="mjs-icon mjs-button"></div>
                 </div>
                 <div id="mjs-toolbar">
                     <div class="mjs-toolbar-item">
@@ -128,7 +128,7 @@
             }
         })
         
-        $mjs.on('click', '#mjs-button', function(evt) {
+        $mjs.on('click', '#mjs-icon-open,#mjs-icon-close', function(evt) {
             $mjs.toggleClass('mjs-active');
             $mjs.trigger('toggle.mjs', [$mjs.hasClass('mjs-active')]);
         });
@@ -237,9 +237,9 @@
         
         var $active = $('#mjs-wrapper.mjs-active #mjs-icon-close,#mjs-wrapper:not(.mjs-active) #mjs-icon-open');
         
-        $active.addClass('mjs-loading');
+        $active.addClass('mjs-loading').prop('disabled', true);
         setTimeout(function() {
-            $active.removeClass('mjs-loading');
+            $active.removeClass('mjs-loading').prop('disabled', false);
         }, 2000);
     };
     
