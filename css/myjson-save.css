@@ -43,6 +43,29 @@
     transition: opacity .08s linear,-webkit-transform .16s linear;
     transition: transform .16s linear,opacity .08s linear;
     transition: transform .16s linear,opacity .08s linear,-webkit-transform .16s linear;
+    overflow: hidden;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: scale(0.5)
+    }
+    100% {
+        transform: rotate(90deg) scale(1);
+    }
+}
+
+.mjs-icon.mjs-loading {
+    pointer-events: none;
+    width: 40%;
+    height: 40%;
+    margin: 30%;
+    background: white;
+    animation: spin 1s ease-in-out;
+    animation-iteration-count: infinite;
 }
 
 #mjs-icon-close {

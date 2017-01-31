@@ -225,9 +225,23 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
         };
+        MJS.progressBar();
         return $.ajax($.extend(true, requestData, config));
     };
 
+    
+    MJS.progressBar = function(step) {
+        if (typeof step === 'undefined') {
+            step = 0;
+        }
+        
+        var $active = $('#mjs-wrapper.mjs-active #mjs-icon-close,#mjs-wrapper:not(.mjs-active) #mjs-icon-open');
+        
+        $active.addClass('mjs-loading');
+        setTimeout(function() {
+            $active.removeClass('mjs-loading');
+        }, 2000);
+    };
     
     /**
      * Stores MJS config locally
