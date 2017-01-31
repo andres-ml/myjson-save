@@ -3,12 +3,52 @@
     'use strict';
     
     var config  = {
-        binId:      null,
-        authorId:   null,
-        data:       {},
+        data: {},
+        binId: null,
+        authorId: null,
+        options: {
+            autosave: 30,       // frequency of autosaving data, in seconds
+            remote: true,       // set to false to disable saving in remote myjson bin
+        },
     };
 
-    function MJS() {}
+    /**
+     * Initializes MJS
+     * 
+     * @returns {undefined}
+     */
+    MJS.init = function(data, userConfig) {
+        $.extend(true, config.options, userConfig);
+        
+        config.data = data;
+        
+        MJS._initEvents();
+        MJS._render();
+        MJS._loadData();
+    };
+    
+
+    /**
+     * Initializes MJS
+     * 
+     * @returns {undefined}
+     */
+    MJS._initEvents = function() {
+        $(window.document.body).on('ready.mjs', function(evt) {
+            MJS._autosave();
+        });
+    };
+    
+    
+    MJS._autosave = function() {
+        var timeout = config.options.autosave;
+        if (timeout) {
+            setTimeout(function() {
+                MJS.save();
+                MJS._autosave();
+            }, timeout * 1000);
+        }
+    };
     
     /**
      * Stores changes.
@@ -17,28 +57,24 @@
      */
     MJS.save = function() {
         MJS._persist(); // save locally
-        MJS._update();  // save in remote
+        if (config.options.remote) {
+            MJS._update(); // save in remote
+        }
     };
     
-    /**
-     * Debug
-     * 
-     * @returns {undefined}
-     */
-    MJS.debug = function() {
-        console.log(config);
-    };
     
     /**
      * Initializes MJS
      * 
      * @returns {undefined}
      */
-    MJS._initialize = function() {
+    MJS._loadData = function() {
         var configJson = window.localStorage.getItem('MJS.config');
         
         if (configJson !== null) {
-            $.extend(true, config, JSON.parse(configJson));
+            var loadedConfig = JSON.parse(configJson);
+            delete loadedConfig.options;
+            $.extend(true, config, loadedConfig);
         }
         
         if (config.authorId === null) {
@@ -49,11 +85,8 @@
             MJS._generateBin();
         }
         else {
-            MJS._load();
+            $(window.document.body).trigger('ready.mjs', config.data);
         }
-        
-        MJS._render();
-        
     };
     
     /**
@@ -205,13 +238,7 @@
         window.localStorage.setItem('MJS.config', JSON.stringify(config));
     };
     
-    /**
-     * Auto initialize MJS
-     */
-    $(window.document).ready(function() {
-        MJS._initialize();
-    });
-    
+    function MJS() {}
     
     /**
      * Export

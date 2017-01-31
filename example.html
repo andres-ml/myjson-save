@@ -26,23 +26,18 @@
             
             (function() {
                 
-                var data;
-                var defaults = {
-                    foo: 'hi there',
-                    bar: 3,
-                };
-
-                $(document.body).on('ready.mjs', function(event, mjsData) {
-                    data = $.complete(mjsData, defaults);
-                    
-                    setData();
-                    $(document.body).on('change', 'input', function() {
-                        data[$(this).prop('name')] = $(this).val();
-                        MJS.save();
-                    });
+                var data = {};
+                
+                MJS.init(data, {remote: false});
+                
+                setData();
+                
+                // html to data
+                $(document.body).on('change', 'input', function() {
+                    data[$(this).prop('name')] = $(this).val();
                 });
                 
-                
+                // data to html
                 function setData() {
                     for (var name in data) {
                         $('[name="' + name + '"]').val(data[name]);
