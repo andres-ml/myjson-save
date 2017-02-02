@@ -96,25 +96,28 @@
     MJS._render = function() {
         var $mjs = $(`
             <div id="mjs-wrapper" class="mjs-active">
-                <div id="mjs-button" class="">
-                    <div id="mjs-icon-close" class="mjs-icon mjs-button"></div>
-                    <div id="mjs-icon-open" class="mjs-icon mjs-button"></div>
+                <div id="mjs-button" class="mjs-button">
+                    <div id="mjs-icon-close" class="mjs-icon"></div>
+                    <div id="mjs-icon-open" class="mjs-icon"></div>
                 </div>
                 <div id="mjs-toolbar">
-                    <div class="mjs-toolbar-item">
-                        <input class="mjs-toolbar-item" readonly type="text" placeholder="bin-id">
+                    <div id="mjs-toolbar-share" data-toggle="#mjs-icon-share" class="mjs-toolbar-item mjs-toolbar-item-extension input-wrap">
+                        <input id="share-bin-id" readonly type="text" placeholder="bin-id">
                     </div>
-                    <button id="mjs-lock-input" class="mjs-toolbar-item mjs-toolbar-button mjs-button"></button>
-                    <button id="mjs-reset" class="mjs-toolbar-item mjs-toolbar-button mjs-button"></button>
+                    <div id="mjs-toolbar-sshare" data-toggle="#mjs-icon-shsare" class="mjs-toolbar-item mjs-toolbar-item-extension input-wrap">
+                        <input id="share-bin-id" readonly type="text" placeholder="bin-id">
+                    </div>
+                    <div class="mjs-toolbar-item mjs-button">
+                        <div id="mjs-icon-share" class="mjs-icon"></div>
+                    </div>
+                    <div class="mjs-toolbar-item mjs-button">
+                        <div id="mjs-reset" class="mjs-icon"></div>
+                    </div>
                 </div>
             </div>
         `);
         
         $mjs.find('input').val(config.binId);
-        
-        $mjs.on('transitionend', '#mjs-icon-open', function(evt) {
-            window.console.log('transitionend');
-        });
         
         $mjs.find('#mjs-lock-input').on('click', function(evt) {
             $(this).toggleClass('unlocked');
@@ -133,16 +136,21 @@
             $mjs.trigger('toggle.mjs', [$mjs.hasClass('mjs-active')]);
         });
         
-        $mjs.on('toggle.mjs', function(evt, active) {
-            if (!active) {
-                $mjs.trigger('lock.mjs');
+        $mjs.find('.mjs-toolbar-item-extension').each(function() {
+            var $extension = $(this);
+            
+            var trigger = $(this).data('toggle');
+            if (trigger) {
+                console.log(trigger, $(trigger));
+                $mjs.find(trigger).on('click', function(evt) {
+                    $extension.toggleClass('mjs-active');
+                });
+                // close timeout?
             }
-        });
+        })
         
-        $mjs.on('lock.mjs', function(evt) {
-            $mjs.find('input')
-                .val(config.binId)
-                .prop('readonly', true);
+        $(window.document.body).on('ready.mjs', function() {
+            $mjs.find('#share-bin-id').val(config.binId);
         });
         
         $mjs.appendTo(window.document.body);
@@ -225,22 +233,27 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
         };
-        MJS.progressBar();
-        return $.ajax($.extend(true, requestData, config));
+        var request = $.ajax($.extend(true, requestData, config));
+        MJS.progressBar(request);
+        return request;
     };
 
     
-    MJS.progressBar = function(step) {
-        if (typeof step === 'undefined') {
-            step = 0;
-        }
-        
+    MJS.progressBar = function(request) {
         var $active = $('#mjs-wrapper.mjs-active #mjs-icon-close,#mjs-wrapper:not(.mjs-active) #mjs-icon-open');
-        
         $active.addClass('mjs-loading').prop('disabled', true);
-        setTimeout(function() {
+        
+        var minimumDuration = 2000;
+        var disableSpin = function() {
             $active.removeClass('mjs-loading').prop('disabled', false);
-        }, 2000);
+        };
+        
+        var start = new Date();
+        request.done(function() {
+            var elapsed     = new Date() - start;
+            var remaining   = Math.max(0, minimumDuration - elapsed);
+            setTimeout(disableSpin, remaining);
+        });
     };
     
     /**
