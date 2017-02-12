@@ -1,0 +1,3 @@
+- simplify content
+- improve saving format; add metadata
+- collaborative edit

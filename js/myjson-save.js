@@ -95,39 +95,39 @@
      */
     MJS._render = function() {
         var $mjs = $(`
-            <div id="mjs-wrapper" class="mjs-active">
+            <div id="mjs-wrapper">
                 <div id="mjs-button" class="mjs-button">
                     <div id="mjs-icon-close" class="mjs-icon"></div>
                     <div id="mjs-icon-open" class="mjs-icon"></div>
                 </div>
                 <div id="mjs-toolbar">
-                    <div id="mjs-toolbar-share" data-toggle="#mjs-icon-share" class="mjs-toolbar-item mjs-toolbar-item-extension input-wrap">
-                        <input id="share-bin-id" readonly type="text" placeholder="bin-id">
+                    <div id="mjs-toolbar-input" class="input-wrap">
+                        <input id="bin-id" type="text" placeholder="binId">
                     </div>
-                    <div id="mjs-toolbar-sshare" data-toggle="#mjs-icon-shsare" class="mjs-toolbar-item mjs-toolbar-item-extension input-wrap">
-                        <input id="share-bin-id" readonly type="text" placeholder="bin-id">
+                    <div id="mjs-apply" class="mjs-toolbar-item mjs-button">
+                        <div id="mjs-icon-apply" class="mjs-icon"></div>
                     </div>
-                    <div class="mjs-toolbar-item mjs-button">
-                        <div id="mjs-icon-share" class="mjs-icon"></div>
+                    <div id="mjs-toolbar-help" data-toggled-by="#mjs-help" class="mjs-toolbar-item mjs-toolbar-item-extension input-wrap">
+                        <input type="text" value="Copy and share with a friend, or paste a friend's bin, or delete to reset" readonly placeholder="binId">
                     </div>
-                    <div class="mjs-toolbar-item mjs-button">
-                        <div id="mjs-reset" class="mjs-icon"></div>
+                    <div id="mjs-help" class="mjs-toolbar-item mjs-button">
+                        <div id="mjs-icon-help" class="mjs-icon"></div>
                     </div>
                 </div>
             </div>
         `);
         
-        $mjs.find('input').val(config.binId);
+        $mjs.find('#bin-id').val(config.binId);
         
         $mjs.find('#mjs-lock-input').on('click', function(evt) {
             $(this).toggleClass('unlocked');
             
             var isUnlocked = $(this).hasClass('unlocked');
             
-            $mjs.find('input').prop('readonly', !isUnlocked);
+            $mjs.find('#bin-id').prop('readonly', !isUnlocked);
             
             if (isUnlocked) {
-                $mjs.find('input').focus();
+                $mjs.find('#bin-id').focus();
             }
         })
         
@@ -139,7 +139,7 @@
         $mjs.find('.mjs-toolbar-item-extension').each(function() {
             var $extension = $(this);
             
-            var trigger = $(this).data('toggle');
+            var trigger = $(this).data('toggled-by');
             if (trigger) {
                 console.log(trigger, $(trigger));
                 $mjs.find(trigger).on('click', function(evt) {
@@ -149,9 +149,11 @@
             }
         })
         
-        $(window.document.body).on('ready.mjs', function() {
-            $mjs.find('#share-bin-id').val(config.binId);
-        });
+        var fillBinIdInput = function(event) {
+            $mjs.find('#bin-id').val(config.binId);
+        };
+        $(window.document.body).on('toggle.mjs', fillBinIdInput);
+        $(window.document.body).on('ready.mjs', fillBinIdInput);
         
         $mjs.appendTo(window.document.body);
     };
@@ -240,7 +242,7 @@
 
     
     MJS.progressBar = function(request) {
-        var $active = $('#mjs-wrapper.mjs-active #mjs-icon-close,#mjs-wrapper:not(.mjs-active) #mjs-icon-open');
+        var $active = $('#mjs-icon-apply');
         $active.addClass('mjs-loading').prop('disabled', true);
         
         var minimumDuration = 2000;

@@ -28,21 +28,21 @@
                 
                 var data = {};
                 
-                MJS.init(data);
-                
-                setData();
-                
-                // html to data
-                $(document.body).on('change', 'input', function() {
-                    data[$(this).prop('name')] = $(this).val();
-                });
-                
-                // data to html
+                // data -> html
                 function setData() {
                     for (var name in data) {
                         $('[name="' + name + '"]').val(data[name]);
                     }
                 }
+                
+                // data <- html
+                $(document.body).on('change', 'input', function() {
+                    data[$(this).prop('name')] = $(this).val();
+                });
+                
+                
+                MJS.init(data);
+                setData();
                 
             })();
             
