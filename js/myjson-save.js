@@ -9,6 +9,7 @@
         options: {
             autosave: 30,       // frequency of autosaving data, in seconds
             remote: true,       // set to false to disable saving in remote myjson bin
+            ui: true,           // set to false to hide ui
         },
     };
 
@@ -22,6 +23,7 @@
         
         config.data = data;
         
+        MJS._init();
         MJS._initEvents();
         MJS._render();
         MJS._loadData();
@@ -33,13 +35,27 @@
      * 
      * @returns {undefined}
      */
+    MJS._init = function() {
+        if (!config.options.remote) {
+            ocnfig.options.ui = false;
+        }
+    };
+
+    /**
+     * Initializes MJS events
+     * 
+     * @returns {undefined}
+     */
     MJS._initEvents = function() {
         $(window.document.body).on('ready.mjs', function(evt) {
             MJS._autosave();
         });
     };
     
-    
+    /**
+     * 
+     * @returns {undefined}
+     */
     MJS._autosave = function() {
         var timeout = config.options.autosave;
         if (timeout) {
@@ -94,6 +110,11 @@
      * @returns {undefined}
      */
     MJS._render = function() {
+        
+        if (!config.options.ui) {
+            return;
+        }
+        
         var $mjs = $(`
             <div id="mjs-wrapper">
                 <div id="mjs-button" class="mjs-button">
@@ -119,19 +140,7 @@
         
         $mjs.find('#bin-id').val(config.binId);
         
-        $mjs.find('#mjs-lock-input').on('click', function(evt) {
-            $(this).toggleClass('unlocked');
-            
-            var isUnlocked = $(this).hasClass('unlocked');
-            
-            $mjs.find('#bin-id').prop('readonly', !isUnlocked);
-            
-            if (isUnlocked) {
-                $mjs.find('#bin-id').focus();
-            }
-        })
-        
-        $mjs.on('click', '#mjs-icon-open,#mjs-icon-close', function(evt) {
+        $mjs.on('click', '#mjs-button', function(evt) {
             $mjs.toggleClass('mjs-active');
             $mjs.trigger('toggle.mjs', [$mjs.hasClass('mjs-active')]);
         });
