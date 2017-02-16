@@ -37,7 +37,7 @@
      */
     MJS._init = function() {
         if (!config.options.remote) {
-            ocnfig.options.ui = false;
+            config.options.ui = false;
         }
     };
 
@@ -47,7 +47,7 @@
      * @returns {undefined}
      */
     MJS._initEvents = function() {
-        $(window.document.body).on('ready.mjs', function(evt) {
+        $(window.document.body).one('load.mjs', function(evt) {
             MJS._autosave();
         });
     };
@@ -100,6 +100,9 @@
         if (config.binId === null) {
             MJS._generateBin();
         }
+        else if (config.options.remote) {
+            MJS._load();
+        }
         else {
             $(window.document.body).trigger('ready.mjs', config.data);
         }
@@ -150,23 +153,39 @@
             
             var trigger = $(this).data('toggled-by');
             if (trigger) {
-                console.log(trigger, $(trigger));
                 $mjs.find(trigger).on('click', function(evt) {
                     $extension.toggleClass('mjs-active');
                 });
                 // close timeout?
             }
-        })
+        });
+        
+        $mjs.on('click', '#mjs-apply', function(evt) {
+            var request = MJS._updateBin($mjs.find('#bin-id').val());
+            MJS._bindProgress(request, '#mjs-icon-apply');
+        });
         
         var fillBinIdInput = function(event) {
             $mjs.find('#bin-id').val(config.binId);
         };
         $(window.document.body).on('toggle.mjs', fillBinIdInput);
-        $(window.document.body).on('ready.mjs', fillBinIdInput);
+        $(window.document.body).on('load.mjs', fillBinIdInput);
         
         $mjs.appendTo(window.document.body);
     };
     
+    MJS._updateBin = function(newBinId) {
+        if (newBinId === "") {
+            return MJS._generateBin();
+        }
+        
+        config.binId = newBinId;
+        var request = MJS._load();
+        request.done(function(result) {
+            MJS._persist();
+        });
+        return request;
+    };
     
     /**
      * Creates a new Myjson bin
@@ -180,7 +199,24 @@
                 config.binId = result.uri.split('/').pop();
                 MJS._persist();
                 
-                $(window.document.body).trigger('ready.mjs', config.data);
+                $(window.document.body).trigger('load.mjs', config.data);
+            }
+        });
+    };
+    
+    /**
+     * Creates a new Myjson bin
+     * 
+     * @returns {undefined}
+     */
+    MJS._generateBin = function() {
+        return MJS._request(null, {}, {
+            type: "POST",
+            success: function(result) {
+                config.binId = result.uri.split('/').pop();
+                MJS._persist();
+                
+                $(window.document.body).trigger('load.mjs', config.data);
             }
         });
     };
@@ -211,11 +247,11 @@
      * @returns {undefined}
      */
     MJS._load = function() {
-        MJS._request(config.binId, null, {
+        return MJS._request(config.binId, null, {
             type: "GET",
             success: function(data) {
-                config.data = data;
-                $(window.document.body).trigger('ready.mjs', config.data);
+                $.extend(true, config.data, data);
+                $(window.document.body).trigger('load.mjs', config.data);
             }
         });
     };
@@ -245,18 +281,18 @@
             dataType: "json",
         };
         var request = $.ajax($.extend(true, requestData, config));
-        MJS.progressBar(request);
+        MJS._bindProgress(request, '#mjs-icon-apply');
         return request;
     };
 
     
-    MJS.progressBar = function(request) {
-        var $active = $('#mjs-icon-apply');
-        $active.addClass('mjs-loading').prop('disabled', true);
+    MJS._bindProgress = function(request, element) {
+        var $element = $(element);
+        $element.addClass('mjs-loading').prop('disabled', true);
         
         var minimumDuration = 2000;
         var disableSpin = function() {
-            $active.removeClass('mjs-loading').prop('disabled', false);
+            $element.removeClass('mjs-loading').prop('disabled', false);
         };
         
         var start = new Date();

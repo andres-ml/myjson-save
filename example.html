@@ -40,9 +40,12 @@
                     data[$(this).prop('name')] = $(this).val();
                 });
                 
+                $(document.body).on('load.mjs', function(evt) {
+                    setData();
+                    console.log(data);
+                });
                 
-                MJS.init(data, {ui: true});
-                setData();
+                MJS.init(data);
                 
             })();
             
