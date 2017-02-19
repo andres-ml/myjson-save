@@ -290,7 +290,7 @@
         var $element = $(element);
         $element.addClass('mjs-loading').prop('disabled', true);
         
-        var minimumDuration = 2000;
+        var minimumDuration = 100;
         var disableSpin = function() {
             $element.removeClass('mjs-loading').prop('disabled', false);
         };
