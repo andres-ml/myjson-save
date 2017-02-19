@@ -1,0 +1,25 @@
+{
+  "name": "myjson-save",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andres-ml/myjson-save.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andres-ml/myjson-save/issues"
+  },
+  "homepage": "https://github.com/andres-ml/myjson-save#readme",
+  "devDependencies": {
+    "css-loader": "^0.26.1",
+    "html-loader": "^0.4.4",
+    "style-loader": "^0.13.1"
+  }
+}
