@@ -23,10 +23,13 @@
 }
 
 .mjs-button {
-    cursor: pointer;
     background: none;
     border: none;
     position: relative;
+}
+
+.mjs-button:not(.mjs-loading) {
+    cursor: pointer;
 }
 
 #mjs-button:hover {
@@ -68,7 +71,7 @@
     }
 }
 
-.mjs-icon.mjs-loading {
+.mjs-loading .mjs-icon {
     pointer-events: none;
     width: 40%;
     height: 40%;

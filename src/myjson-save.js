@@ -142,7 +142,7 @@
         
         $mjs.on('click', '#mjs-apply', function(evt) {
             var request = MJS._updateBin($mjs.find('#bin-id').val());
-            MJS._bindProgress(request, '#mjs-icon-apply');
+            MJS._bindProgress(request, '#mjs-apply');
         });
         
         var fillBinIdInput = function(event) {
@@ -159,10 +159,17 @@
             return MJS._generateBin();
         }
         
+        var oldBinId = config.binId;
+        
         config.binId = newBinId;
         var request = MJS._load();
         request.done(function(result) {
             MJS._persist();
+        });
+        request.fail(function() {
+            if (oldBinId !== newBinId) {
+                MJS._updateBin(oldBinId);
+            }
         });
         return request;
     };
@@ -261,7 +268,7 @@
             dataType: "json",
         };
         var request = $.ajax($.extend(true, requestData, config));
-        MJS._bindProgress(request, '#mjs-icon-apply');
+        MJS._bindProgress(request, '#mjs-apply');
         return request;
     };
 
