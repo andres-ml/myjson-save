@@ -177,10 +177,9 @@
 .input-wrap input, .input-wrap label {
     font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
     font-size: 16px;
-    padding: 11px 10px 10px 10px;
     width: calc(100% - 20px);
     height: calc(100% - 20px);
-    margin:auto;
+    margin: 10px;
     color: white;
     border: none;
     background: transparent;
