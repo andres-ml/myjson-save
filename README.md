@@ -16,14 +16,14 @@ var data = {foo: [], bar: []};
 
 // listen for mjs load
 $(document.body).on('load.mjs', function(evt) {
-	// data.foo will contain whichever information was saved in previous session,
+    // data.foo will contain whichever information was saved in previous session,
     // or its initial value ([]) if it's the first time
-	console.log(data.foo)
+    console.log(data.foo)
 });
 
 // initialize
 $(function() {
-	MJS.init(data);
+    MJS.init(data);
 });
 
 ...
